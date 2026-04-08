@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section class="admin-card">
+        <p class="eyebrow">Admin Access</p>
+        <h1>Sign in to the stream dashboard</h1>
+        <p class="lede">
+          Review active live streams, see how many people are in each room, and jump
+          straight into any stream page.
+        </p>
+        <form id="admin-login-form" class="admin-form">
+          <label>
+            <span>Password</span>
+            <input id="password" name="password" type="password" required />
+          </label>
+          <button type="submit">Log In</button>
+        </form>
+        <p id="login-error" class="error-text hidden">Invalid password.</p>
+      </section>
+    </main>
+    <script src="/admin-login.js"></script>
+  </body>
+</html>

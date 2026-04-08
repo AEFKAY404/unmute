@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StreamSide Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Independent Live Chat Layer</p>
+          <h1>Embed the stream. Own the conversation.</h1>
+          <p class="lede">
+            Create a shareable stream page, keep the chat under your control, and
+            bring viewers into one moderated room even when YouTube chat is off.
+          </p>
+        </div>
+
+        <form id="stream-locator-form" class="stream-form">
+          <label>
+            <span>YouTube Video ID or URL</span>
+            <input
+              id="streamInput"
+              name="streamInput"
+              type="text"
+              placeholder="Paste a YouTube live link or video ID"
+              required
+            />
+          </label>
+          <button type="submit">Open Stream Page</button>
+        </form>
+
+        <div class="feature-strip">
+          <div>
+            <strong>Shareable</strong>
+            <span>Each stream gets its own URL like `/stream/videoId`.</span>
+          </div>
+          <div>
+            <strong>Moderated</strong>
+            <span>Rate limits, blocked words, timeouts, mute, ban, and delete.</span>
+          </div>
+          <div>
+            <strong>Live Presence</strong>
+            <span>See who is here now and when people are typing.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="experience-panel">
+        <div class="player-card">
+          <div class="player-header">
+            <div>
+              <p class="label">Now Streaming</p>
+              <h2 id="stream-title">Paste a stream above to create a live chat page</h2>
+            </div>
+            <p id="room-badge" class="room-badge">No stream selected</p>
+          </div>
+
+          <div class="video-frame-wrap">
+            <div id="player-shell" class="player-shell">
+              <div id="player" class="player"></div>
+              <div id="player-fallback" class="player-fallback hidden">
+                <h3>Stream playback unavailable here</h3>
+                <p>
+                  The YouTube embed may be blocked, private, or temporarily unavailable.
+                  The chat can still stay live on this page.
+                </p>
+                <a
+                  id="youtube-link"
+                  class="fallback-link"
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open on YouTube
+                </a>
+              </div>
+            </div>
+          </div>
+          <p id="embed-help" class="embed-help">
+            Share this page URL so everyone joins the same room for this stream.
+          </p>
+        </div>
+
+        <div class="chat-card">
+          <div class="chat-header">
+            <div>
+              <p class="label">Live Chat</p>
+              <h2>Community Feed</h2>
+              <p id="presence-line" class="presence-line">Nobody is here yet.</p>
+            </div>
+            <div class="chat-status-stack">
+              <span id="people-pill" class="connection-pill">0 people here now</span>
+              <span id="connection-pill" class="connection-pill offline">Offline</span>
+            </div>
+          </div>
+
+          <section id="prejoin-panel" class="prejoin-panel">
+            <p class="label">Join This Stream</p>
+            <h3 id="prejoin-title">Pick a stream to continue</h3>
+            <p id="prejoin-copy" class="prejoin-copy">
+              Open a stream page first, then choose a display name to join the room.
+            </p>
+            <form id="join-form" class="join-form">
+              <label>
+                <span>Display Name</span>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Your name"
+                  maxlength="30"
+                  required
+                />
+              </label>
+              <fieldset class="color-picker">
+                <legend>Avatar Color</legend>
+                <div id="color-options" class="color-options"></div>
+              </fieldset>
+              <button type="submit">Join Chat</button>
+            </form>
+            <p id="moderator-notice" class="moderator-notice hidden">
+              Moderator access detected from your signed link.
+            </p>
+          </section>
+
+          <section id="pinned-panel" class="pinned-panel hidden">
+            <p class="label">Pinned</p>
+            <div class="pinned-card">
+              <div>
+                <strong id="pinned-author">Moderator Announcement</strong>
+                <p id="pinned-text">Room rules and announcements will appear here.</p>
+              </div>
+              <span id="pinned-time" class="pinned-time"></span>
+            </div>
+          </section>
+
+          <div id="messages" class="messages hidden"></div>
+          <p id="typing-status" class="typing-status hidden"></p>
+
+          <form id="message-form" class="message-form hidden">
+            <input
+              id="message-input"
+              type="text"
+              placeholder="Say something useful, funny, or both"
+              maxlength="500"
+              disabled
+            />
+            <button type="submit" disabled>Send</button>
+          </form>
+
+          <section id="admin-panel" class="admin-panel hidden">
+            <div class="admin-panel-header">
+              <div>
+                <p class="label">Moderation</p>
+                <h3>Moderator Controls</h3>
+              </div>
+              <span class="admin-badge">Signed Access</span>
+            </div>
+            <p id="admin-help" class="admin-help">
+              Use timeout, mute, ban, and delete controls to manage this room.
+            </p>
+            <form id="pin-form" class="pin-form">
+              <input
+                id="pin-input"
+                type="text"
+                maxlength="280"
+                placeholder="Pin an announcement or room rule"
+              />
+              <div class="admin-action-row">
+                <button type="submit">Update Pin</button>
+                <button id="clear-pin-button" type="button">Remove Pin</button>
+                <button id="clear-chat-button" type="button">Clear Chat</button>
+              </div>
+            </form>
+            <div id="participant-list" class="participant-list"></div>
+            <div class="reports-section">
+              <div class="reports-header">
+                <p class="label">Reports</p>
+                <h4>Flagged Messages</h4>
+              </div>
+              <div id="reports-list" class="reports-list"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

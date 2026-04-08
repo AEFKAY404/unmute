@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/admin.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell">
+      <header class="dashboard-header">
+        <div>
+          <p class="eyebrow">Admin Dashboard</p>
+          <h1>Active Live Streams</h1>
+          <p class="lede">
+            Streams with active watchers or chat participants appear here and refresh automatically.
+          </p>
+        </div>
+        <div class="dashboard-actions">
+          <button id="refresh-button" type="button">Refresh</button>
+          <button id="logout-button" type="button">Log Out</button>
+        </div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Total Active Streams</span>
+          <strong id="streams-count">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Total People Watching</span>
+          <strong id="watchers-count">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Total People In Chat</span>
+          <strong id="chatters-count">0</strong>
+        </article>
+      </section>
+
+      <section id="rooms-grid" class="rooms-grid"></section>
+      <p id="dashboard-empty" class="empty-state hidden">No active stream rooms right now.</p>
+
+      <section id="room-detail" class="room-detail hidden">
+        <div class="room-detail-header">
+          <div>
+            <p class="eyebrow">Manage Stream</p>
+            <h2 id="detail-room-id">Select a stream</h2>
+          </div>
+          <a id="detail-stream-link" class="room-link-pill" href="#">Open Stream</a>
+        </div>
+
+        <form id="settings-form" class="settings-form">
+          <label>
+            <span>Cooldown (ms)</span>
+            <input id="setting-cooldown" type="number" min="0" />
+          </label>
+          <label>
+            <span>Rate Window (ms)</span>
+            <input id="setting-rate-window" type="number" min="1000" />
+          </label>
+          <label>
+            <span>Messages Per Window</span>
+            <input id="setting-rate-max" type="number" min="1" />
+          </label>
+          <label>
+            <span>Repeat Window (ms)</span>
+            <input id="setting-repeat-window" type="number" min="1000" />
+          </label>
+          <label>
+            <span>Repeat Limit</span>
+            <input id="setting-repeat-limit" type="number" min="1" />
+          </label>
+          <label>
+            <span>Link Window (ms)</span>
+            <input id="setting-link-window" type="number" min="1000" />
+          </label>
+          <label>
+            <span>Max Links Per Window</span>
+            <input id="setting-link-max" type="number" min="1" />
+          </label>
+          <div class="dashboard-actions">
+            <button type="submit">Save Settings</button>
+            <button id="end-stream-button" type="button">End Stream</button>
+          </div>
+        </form>
+
+        <div class="participants-panel">
+          <div class="reports-header">
+            <p class="eyebrow">Participants</p>
+            <h3>Kick Users</h3>
+          </div>
+          <div id="detail-participants" class="detail-participants"></div>
+        </div>
+      </section>
+    </main>
+    <script src="/admin-dashboard.js"></script>
+  </body>
+</html>
