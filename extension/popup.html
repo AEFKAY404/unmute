@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unmute Overlay</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup-shell">
+      <p class="eyebrow">Unmute Overlay</p>
+      <h1>Overlay Settings</h1>
+      <form id="settings-form" class="settings-form">
+        <label class="toggle-row">
+          <span>Enable on YouTube</span>
+          <input id="enabled" type="checkbox" />
+        </label>
+
+        <label>
+          <span>Display name</span>
+          <input id="display-name" type="text" maxlength="30" placeholder="Guest" />
+        </label>
+
+        <button type="submit">Save</button>
+      </form>
+      <p id="status" class="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

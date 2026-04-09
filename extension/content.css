@@ -1,0 +1,175 @@
+.unmute-overlay,
+.unmute-restore {
+  all: initial;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.unmute-overlay *,
+.unmute-restore * {
+  box-sizing: border-box;
+}
+
+.unmute-overlay {
+  position: fixed;
+  top: 96px;
+  right: 20px;
+  width: 360px;
+  height: 520px;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(8, 17, 27, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  z-index: 2147483647;
+  color: #eef5ff;
+}
+
+.unmute-overlay.hidden,
+.unmute-restore.hidden {
+  display: none;
+}
+
+.unmute-header,
+.unmute-header-actions,
+.unmute-form,
+.unmute-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.unmute-eyebrow {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: #ffd166;
+}
+
+.unmute-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+  color: #eef5ff;
+}
+
+.unmute-pill,
+.unmute-hide,
+.unmute-send,
+.unmute-restore {
+  border-radius: 999px;
+}
+
+.unmute-pill {
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #9eb4c8;
+  font-size: 12px;
+}
+
+.unmute-hide,
+.unmute-send,
+.unmute-restore {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.unmute-hide,
+.unmute-restore {
+  padding: 8px 10px;
+  color: #eef5ff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.unmute-messages {
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.unmute-message {
+  max-width: 86%;
+  padding: 9px 11px;
+  border-radius: 20px 20px 20px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #eef5ff;
+  justify-self: start;
+}
+
+.unmute-message.own {
+  justify-self: end;
+  border-radius: 20px 20px 8px 20px;
+  background: linear-gradient(180deg, #2f7bf6 0%, #1f6ae6 100%);
+}
+
+.unmute-message.system {
+  border-radius: 14px;
+  background: rgba(255, 122, 24, 0.2);
+}
+
+.unmute-meta {
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.unmute-meta strong {
+  color: inherit;
+}
+
+.unmute-message p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.unmute-typing,
+.unmute-status {
+  margin: 0;
+  min-height: 16px;
+  font-size: 12px;
+  color: #9eb4c8;
+}
+
+.unmute-form {
+  align-items: stretch;
+}
+
+.unmute-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef5ff;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.unmute-send {
+  padding: 0 14px;
+  font-weight: 700;
+  color: #0b0e13;
+  background: linear-gradient(135deg, #ff7a18 0%, #ffd166 100%);
+}
+
+.unmute-restore {
+  position: fixed;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  min-height: 84px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  z-index: 2147483647;
+}
