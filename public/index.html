@@ -54,14 +54,19 @@
         </div>
       </section>
 
-      <section class="experience-panel">
+      <section id="experience-panel" class="experience-panel">
         <div class="player-card">
           <div class="player-header">
             <div>
               <p class="label">Now Streaming</p>
               <h2 id="stream-title">Paste a stream above to create a live chat page</h2>
             </div>
-            <p id="room-badge" class="room-badge">No stream selected</p>
+            <div class="player-actions">
+              <p id="room-badge" class="room-badge">No stream selected</p>
+              <button id="theater-mode-button" class="theater-mode-button" type="button">
+                Fullscreen
+              </button>
+            </div>
           </div>
 
           <div class="video-frame-wrap">
@@ -94,13 +99,20 @@
           <div class="chat-header">
             <div>
               <p class="label">Live Chat</p>
-              <h2>Community Feed</h2>
               <p id="presence-line" class="presence-line">Nobody is here yet.</p>
             </div>
             <div class="chat-status-stack">
               <span id="people-pill" class="connection-pill">0 people here now</span>
               <span id="connection-pill" class="connection-pill offline">Offline</span>
             </div>
+          </div>
+          <div id="theater-toolbar" class="theater-toolbar hidden">
+            <button id="theater-chat-toggle" class="theater-secondary-button" type="button">
+              Hide
+            </button>
+            <button id="theater-exit-button" class="theater-secondary-button" type="button">
+              Exit
+            </button>
           </div>
 
           <section id="prejoin-panel" class="prejoin-panel">
@@ -121,10 +133,6 @@
                   required
                 />
               </label>
-              <fieldset class="color-picker">
-                <legend>Avatar Color</legend>
-                <div id="color-options" class="color-options"></div>
-              </fieldset>
               <button type="submit">Join Chat</button>
             </form>
             <p id="moderator-notice" class="moderator-notice hidden">
@@ -191,6 +199,9 @@
             </div>
           </section>
         </div>
+        <button id="theater-chat-restore" class="theater-restore-button hidden" type="button">
+          Chat
+        </button>
       </section>
     </div>
 

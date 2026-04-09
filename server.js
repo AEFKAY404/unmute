@@ -45,7 +45,6 @@ loadDotEnvFile();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
 const NODE_ENV = process.env.NODE_ENV || "development";
 const IS_PRODUCTION = NODE_ENV === "production";
@@ -65,6 +64,10 @@ const DEFAULT_TIMEOUT_MS = 1000 * 60 * 5;
 const ADMIN_SIGNING_SECRET = process.env.ADMIN_SIGNING_SECRET || "";
 const ADMIN_DASHBOARD_PASSWORD = process.env.ADMIN_DASHBOARD_PASSWORD || "change-me-admin";
 const ADMIN_DASHBOARD_SECRET = process.env.ADMIN_DASHBOARD_SECRET || ADMIN_SIGNING_SECRET || "change-dashboard-secret";
+const ALLOWED_CLIENT_ORIGINS = String(process.env.ALLOWED_CLIENT_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 const BLOCKED_WORDS = String(process.env.BLOCKED_WORDS || "")
   .split(",")
   .map((word) => word.trim().toLowerCase())
@@ -76,6 +79,50 @@ const indexPath = path.join(publicDir, "index.html");
 const adminLoginPath = path.join(publicDir, "admin-login.html");
 const adminDashboardPath = path.join(publicDir, "admin-dashboard.html");
 const loginAttemptsByIp = new Map();
+
+function isAllowedClientOrigin(origin) {
+  if (!origin) {
+    return true;
+  }
+
+  if (origin.startsWith("chrome-extension://")) {
+    return true;
+  }
+
+  if (
+    origin === "https://www.youtube.com" ||
+    origin === "https://m.youtube.com" ||
+    origin === "https://youtube.com"
+  ) {
+    return true;
+  }
+
+  if (
+    origin.startsWith("http://localhost:") ||
+    origin.startsWith("https://localhost:") ||
+    origin.startsWith("http://127.0.0.1:") ||
+    origin.startsWith("https://127.0.0.1:")
+  ) {
+    return true;
+  }
+
+  return ALLOWED_CLIENT_ORIGINS.includes(origin);
+}
+
+const io = new Server(server, {
+  cors: {
+    origin(origin, callback) {
+      if (isAllowedClientOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origin not allowed by Socket.IO"));
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -4,13 +4,20 @@ const streamLocatorForm = document.getElementById("stream-locator-form");
 const streamInput = document.getElementById("streamInput");
 const joinForm = document.getElementById("join-form");
 const usernameInput = document.getElementById("username");
-const colorOptions = document.getElementById("color-options");
 const messageForm = document.getElementById("message-form");
 const messageInput = document.getElementById("message-input");
 const messageButton = messageForm.querySelector("button");
 const streamTitle = document.getElementById("stream-title");
 const roomBadge = document.getElementById("room-badge");
 const embedHelp = document.getElementById("embed-help");
+const experiencePanel = document.getElementById("experience-panel");
+const theaterModeButton = document.getElementById("theater-mode-button");
+const theaterToolbar = document.getElementById("theater-toolbar");
+const theaterChatToggle = document.getElementById("theater-chat-toggle");
+const theaterExitButton = document.getElementById("theater-exit-button");
+const theaterChatRestore = document.getElementById("theater-chat-restore");
+const chatCard = document.querySelector(".chat-card");
+const chatHeader = document.querySelector(".chat-header");
 const peoplePill = document.getElementById("people-pill");
 const connectionPill = document.getElementById("connection-pill");
 const presenceLine = document.getElementById("presence-line");
@@ -35,7 +42,7 @@ const reportsList = document.getElementById("reports-list");
 const playerFallback = document.getElementById("player-fallback");
 const youtubeLink = document.getElementById("youtube-link");
 
-const COLOR_PRESETS = ["#ff7a18", "#ffd166", "#79f2a3", "#73c2fb", "#f497da", "#c4b5fd"];
+const PROFILE_COLORS = ["#8b5cf6", "#4338ca", "#2563eb", "#16a34a", "#eab308", "#f97316", "#dc2626"];
 
 let activeRoomId = "";
 let activeUsername = localStorage.getItem("streamside-username") || "";
@@ -46,11 +53,14 @@ let currentPinnedMessage = null;
 let currentReports = [];
 let joinedChat = false;
 let sessionId = localStorage.getItem("streamside-session-id") || crypto.randomUUID();
-let selectedProfileColor = localStorage.getItem("streamside-profile-color") || COLOR_PRESETS[0];
+let selectedProfileColor = "";
 let typingTimeoutId = 0;
 let ytPlayer = null;
 let ytScriptPromise = null;
 let currentRoomSettings = null;
+let theaterChatCollapsed = false;
+let theaterDragState = null;
+let currentStreamLabel = "";
 
 localStorage.setItem("streamside-session-id", sessionId);
 usernameInput.value = activeUsername;
@@ -64,19 +74,13 @@ function getInitials(name) {
     .join("") || "G";
 }
 
-function renderColorOptions() {
-  colorOptions.innerHTML = "";
-  COLOR_PRESETS.forEach((color) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "color-swatch";
-    button.dataset.color = color;
-    button.style.setProperty("--swatch-color", color);
-    if (color === selectedProfileColor) {
-      button.classList.add("active");
-    }
-    colorOptions.appendChild(button);
-  });
+function getProfileColor(seed) {
+  const source = String(seed || "guest");
+  let total = 0;
+  for (let index = 0; index < source.length; index += 1) {
+    total += source.charCodeAt(index);
+  }
+  return PROFILE_COLORS[total % PROFILE_COLORS.length];
 }
 
 function escapeHtml(value) {
@@ -146,6 +150,42 @@ function setConnectedState(isConnected) {
   connectionPill.classList.toggle("online", isConnected);
 }
 
+function isTheaterModeActive() {
+  return document.fullscreenElement === experiencePanel;
+}
+
+function syncTheaterUi() {
+  const inTheaterMode = isTheaterModeActive();
+  document.body.classList.toggle("theater-mode-active", inTheaterMode);
+  experiencePanel.classList.toggle("theater-mode", inTheaterMode);
+  experiencePanel.classList.toggle("chat-collapsed", inTheaterMode && theaterChatCollapsed);
+  theaterToolbar.classList.toggle("hidden", !inTheaterMode);
+  theaterChatRestore.classList.toggle("hidden", !inTheaterMode || !theaterChatCollapsed);
+  theaterModeButton.textContent = inTheaterMode ? "Exit" : "Fullscreen";
+  theaterChatToggle.textContent = theaterChatCollapsed ? "Show" : "Hide";
+
+  if (!inTheaterMode && chatCard) {
+    chatCard.style.removeProperty("left");
+    chatCard.style.removeProperty("top");
+    chatCard.style.removeProperty("right");
+    chatCard.style.removeProperty("bottom");
+  }
+}
+
+async function toggleTheaterMode() {
+  if (!experiencePanel) {
+    return;
+  }
+
+  if (isTheaterModeActive()) {
+    await document.exitFullscreen();
+    return;
+  }
+
+  theaterChatCollapsed = false;
+  await experiencePanel.requestFullscreen();
+}
+
 function enableMessaging(enabled) {
   messageInput.disabled = !enabled;
   messageButton.disabled = !enabled;
@@ -183,24 +223,32 @@ function setAdminState(nextIsAdmin, moderatorLinksConfigured = true) {
 }
 
 function renderPresence(participantCount, typingNames = []) {
-  peoplePill.textContent = `${participantCount} ${participantCount === 1 ? "person" : "people"} here now`;
+  peoplePill.innerHTML = `
+    <span class="people-pill-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path
+          d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Zm0 2c-3.04 0-5.5 1.79-5.5 4v1h11v-1c0-2.21-2.46-4-5.5-4Zm6.5-1.12a2.88 2.88 0 1 0-2.36-4.53 5.54 5.54 0 0 1 0 6.16 6.8 6.8 0 0 1 4.86 3.49h2v-.55c0-1.99-1.92-3.7-4.5-4.57Zm-13 0C2.92 13.75 1 15.46 1 17.45V18h2a6.8 6.8 0 0 1 4.86-3.49 5.54 5.54 0 0 1 0-6.16A2.88 2.88 0 1 0 5.5 12.88Z"
+        />
+      </svg>
+    </span>
+    <span>${participantCount}</span>
+  `;
 
   if (typingNames.length === 0) {
-    presenceLine.textContent = participantCount > 0
-      ? `${participantCount} ${participantCount === 1 ? "person is" : "people are"} watching or chatting here now.`
-      : "Nobody is here yet.";
+    presenceLine.textContent = participantCount > 0 ? "" : "Nobody is here yet.";
     typingStatus.textContent = "";
     return;
   }
 
   const suffix = typingNames.length === 1 ? "is typing..." : "are typing...";
   typingStatus.textContent = `${typingNames.join(", ")} ${suffix}`;
-  presenceLine.textContent = `${participantCount} ${participantCount === 1 ? "person is" : "people are"} watching or chatting here now.`;
+  presenceLine.textContent = "";
 }
 
 function renderMessage(message, type = "user") {
   const item = document.createElement("article");
-  item.className = `message ${type}`;
+  const isOwnMessage = type === "user" && message.sessionId === sessionId;
+  item.className = `message ${type}${isOwnMessage ? " own" : ""}`;
   item.dataset.messageId = message.id || "";
   item.dataset.sessionId = message.sessionId || "";
   const name = type === "user" ? escapeHtml(message.username) : "System";
@@ -214,7 +262,7 @@ function renderMessage(message, type = "user") {
       ? `<button class="message-action" type="button" data-action="report-message" data-message-id="${escapeHtml(message.id)}">Report</button>`
       : "";
   const avatar = type === "user"
-    ? `<span class="message-avatar" style="--avatar-color:${profileColor}">${escapeHtml(getInitials(message.username))}</span>`
+    ? `<span class="message-avatar" style="background-color:${profileColor}; color:#ffffff;">${escapeHtml(getInitials(message.username))}</span>`
     : `<span class="message-avatar system-avatar">!</span>`;
 
   item.innerHTML = `
@@ -279,7 +327,7 @@ function renderParticipantList(participants) {
     item.innerHTML = `
       <div class="participant-copy">
         <div class="participant-name-row">
-          <span class="mini-avatar" style="--avatar-color:${escapeHtml(participant.profileColor || "#64748b")}">${escapeHtml(getInitials(participant.username))}</span>
+          <span class="mini-avatar" style="background-color:${escapeHtml(participant.profileColor || "#64748b")}; color:#ffffff;">${escapeHtml(getInitials(participant.username))}</span>
           <strong>${escapeHtml(participant.username)}</strong>
         </div>
         <span>${status}</span>
@@ -331,12 +379,17 @@ function getYoutubeWatchUrl(videoId) {
   return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 }
 
+function updateStreamPresentation(videoId, title = "") {
+  currentStreamLabel = String(title || "").trim() || `YouTube Live Stream`;
+  streamTitle.textContent = currentStreamLabel;
+  roomBadge.textContent = "Chat live";
+  prejoinTitle.textContent = currentStreamLabel;
+  prejoinCopy.textContent = `Share ${getStreamUrl(videoId)} so everyone joins the same room for this stream.`;
+}
+
 function setStreamContext(videoId) {
   activeRoomId = videoId;
-  streamTitle.textContent = `YouTube Live Room: ${videoId}`;
-  roomBadge.textContent = `Room: ${videoId}`;
-  prejoinTitle.textContent = `Stream detected: ${videoId}`;
-  prejoinCopy.textContent = `Share ${getStreamUrl(videoId)} so everyone joins the same room for this stream.`;
+  updateStreamPresentation(videoId);
   embedHelp.textContent = `Shareable page: ${getStreamUrl(videoId)}`;
   youtubeLink.href = getYoutubeWatchUrl(videoId);
   streamInput.value = videoId;
@@ -396,8 +449,17 @@ async function renderPlayer(videoId) {
       playerVars: {
         autoplay: 1,
         playsinline: 1,
+        fs: 0,
+        modestbranding: 1,
       },
       events: {
+        onReady: (event) => {
+          const playerData = event.target?.getVideoData?.() || {};
+          const title = String(playerData.title || "").trim();
+          if (title) {
+            updateStreamPresentation(videoId, title);
+          }
+        },
         onError: () => {
           showPlayerFallback(
             "The YouTube embed is unavailable here, but the chat can still stay active on this page."
@@ -426,6 +488,116 @@ function startTyping() {
   }, 1200);
 }
 
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function canStartChatDrag(target) {
+  return (
+    isTheaterModeActive() &&
+    !theaterChatCollapsed &&
+    !!target.closest(".chat-header") &&
+    !target.closest("button, input, textarea, a")
+  );
+}
+
+function beginChatDrag(event) {
+  if (!chatCard || !canStartChatDrag(event.target)) {
+    return;
+  }
+
+  const panelRect = experiencePanel.getBoundingClientRect();
+  const cardRect = chatCard.getBoundingClientRect();
+
+  theaterDragState = {
+    pointerId: event.pointerId,
+    offsetX: event.clientX - cardRect.left,
+    offsetY: event.clientY - cardRect.top,
+    panelRect,
+  };
+
+  chatCard.style.left = `${cardRect.left - panelRect.left}px`;
+  chatCard.style.top = `${cardRect.top - panelRect.top}px`;
+  chatCard.style.right = "auto";
+  chatCard.style.bottom = "auto";
+  chatCard.classList.add("dragging");
+  chatHeader?.setPointerCapture(event.pointerId);
+  event.preventDefault();
+}
+
+function moveChatOverlay(event) {
+  if (!chatCard || !theaterDragState || event.pointerId !== theaterDragState.pointerId) {
+    return;
+  }
+
+  const width = chatCard.offsetWidth;
+  const height = chatCard.offsetHeight;
+  const nextLeft = clamp(
+    event.clientX - theaterDragState.panelRect.left - theaterDragState.offsetX,
+    0,
+    theaterDragState.panelRect.width - width
+  );
+  const nextTop = clamp(
+    event.clientY - theaterDragState.panelRect.top - theaterDragState.offsetY,
+    0,
+    theaterDragState.panelRect.height - height
+  );
+
+  chatCard.style.left = `${nextLeft}px`;
+  chatCard.style.top = `${nextTop}px`;
+}
+
+function endChatDrag(event) {
+  if (!theaterDragState || event.pointerId !== theaterDragState.pointerId) {
+    return;
+  }
+
+  chatCard?.classList.remove("dragging");
+  chatHeader?.releasePointerCapture?.(event.pointerId);
+  theaterDragState = null;
+}
+
+theaterModeButton.addEventListener("click", () => {
+  toggleTheaterMode().catch(() => {
+    renderMessage(
+      {
+        text: "Fullscreen mode is not available here. Try a modern browser or a non-embedded tab.",
+        timestamp: new Date().toISOString(),
+      },
+      "system"
+    );
+  });
+});
+
+theaterChatToggle.addEventListener("click", () => {
+  theaterChatCollapsed = !theaterChatCollapsed;
+  syncTheaterUi();
+});
+
+theaterChatRestore.addEventListener("click", () => {
+  theaterChatCollapsed = false;
+  syncTheaterUi();
+});
+
+theaterExitButton.addEventListener("click", () => {
+  if (isTheaterModeActive()) {
+    document.exitFullscreen().catch(() => {});
+  }
+});
+
+document.addEventListener("fullscreenchange", () => {
+  if (!isTheaterModeActive()) {
+    theaterChatCollapsed = false;
+    theaterDragState = null;
+  }
+  syncTheaterUi();
+});
+
+chatHeader?.addEventListener("pointerdown", beginChatDrag);
+chatHeader?.addEventListener("pointermove", moveChatOverlay);
+chatHeader?.addEventListener("pointerup", endChatDrag);
+chatHeader?.addEventListener("pointercancel", endChatDrag);
+
 streamLocatorForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const videoId = extractVideoId(streamInput.value);
@@ -445,8 +617,8 @@ joinForm.addEventListener("submit", (event) => {
   }
 
   activeUsername = username;
+  selectedProfileColor = getProfileColor(`${sessionId}:${username}`);
   localStorage.setItem("streamside-username", username);
-  localStorage.setItem("streamside-profile-color", selectedProfileColor);
 
   socket.emit("join-room", {
     roomId: activeRoomId,
@@ -498,6 +670,7 @@ socket.on("connect", () => {
       username: activeUsername,
       sessionId,
       moderatorToken,
+      profileColor: selectedProfileColor || getProfileColor(`${sessionId}:${activeUsername}`),
     });
   }
 });
@@ -662,18 +835,8 @@ reportsList.addEventListener("click", (event) => {
   }
 });
 
-colorOptions.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-color]");
-  if (!button) {
-    return;
-  }
-
-  selectedProfileColor = button.dataset.color;
-  renderColorOptions();
-});
-
 const initialVideoId = getVideoIdFromPath();
-renderColorOptions();
+syncTheaterUi();
 if (initialVideoId) {
   setStreamContext(initialVideoId);
   renderPlayer(initialVideoId);
