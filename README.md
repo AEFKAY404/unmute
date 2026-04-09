@@ -92,6 +92,54 @@ Examples:
 - Fly.io
 - VPS with Nginx + PM2
 
+## Render Setup
+
+This repo now includes [render.yaml](/c:/Users/akash/Desktop/workspace/render.yaml) for a single-instance Render web service.
+
+### Recommended Shape
+
+- One Render `web service`
+- One instance only
+- No horizontal scaling yet
+
+This matters because room state and chat history are currently kept in memory. If you run multiple instances, users can get split across separate live chat states.
+
+### Deploy Steps
+
+1. Push the repo to GitHub.
+2. In Render, create a new service from this repo.
+3. Render can detect [render.yaml](/c:/Users/akash/Desktop/workspace/render.yaml) automatically, or you can create the web service manually with:
+   - Build command: `npm install`
+   - Start command: `npm start`
+   - Health check path: `/health`
+4. Set or confirm these environment variables:
+   - `NODE_ENV=production`
+   - `ADMIN_DASHBOARD_PASSWORD`
+   - `ADMIN_DASHBOARD_SECRET`
+   - `ADMIN_SIGNING_SECRET`
+5. Optional:
+   - `BLOCKED_WORDS`
+   - `ALLOWED_CLIENT_ORIGINS`
+6. Deploy the service.
+7. After deploy, verify:
+   - `https://your-service.onrender.com/health`
+   - `https://your-service.onrender.com/admin/login`
+
+### Extension Setup After Deploy
+
+Once Render gives you your public URL, open the Chrome extension popup and set:
+
+- `Backend URL=https://your-service.onrender.com`
+
+Then every extension user who points to that same Render URL will join the same chat backend and the same room for the same YouTube stream.
+
+### Official Render Notes
+
+Render web services support Node apps and WebSocket connections:
+
+- https://render.com/docs/web-services
+- https://render.com/docs/websocket
+
 ## Production Notes
 
 - The app refuses to start in production if secure admin env vars are missing.

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: unmute
+    runtime: node
+    repo: https://github.com/AEFKAY404/unmute
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_DASHBOARD_PASSWORD
+        sync: false
+      - key: ADMIN_DASHBOARD_SECRET
+        generateValue: true
+      - key: ADMIN_SIGNING_SECRET
+        generateValue: true
+      - key: BLOCKED_WORDS
+        sync: false
+      - key: ALLOWED_CLIENT_ORIGINS
+        sync: false
