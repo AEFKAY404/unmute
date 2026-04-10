@@ -1,13 +1,53 @@
 :root {
-  --bg: #08111b;
-  --card: rgba(8, 17, 27, 0.78);
-  --line: rgba(255, 255, 255, 0.1);
-  --text: #eef5ff;
-  --muted: #9eb4c8;
-  --accent: #ff7a18;
-  --accent-2: #ffd166;
-  --good: #79f2a3;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --bg: #f5f5f7;
+  --card: rgba(255, 255, 255, 0.82);
+  --line: rgba(15, 23, 42, 0.08);
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #111111;
+  --accent-2: #2f2f31;
+  --good: #15803d;
+  --shadow: 0 24px 72px rgba(15, 23, 42, 0.08);
+  --body-gradient:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(226, 232, 240, 0.7), transparent 24%),
+    linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 44%, #eef2f7 100%);
+  --input-bg: rgba(245, 247, 250, 0.9);
+  --pill-bg: rgba(255, 255, 255, 0.78);
+  --subtle-button-bg: rgba(255, 255, 255, 0.76);
+  --subtle-button-text: #374151;
+  --message-bg: rgba(255, 255, 255, 0.95);
+  --surface-bg: rgba(255, 255, 255, 0.72);
+  --surface-strong: rgba(255, 255, 255, 0.76);
+  --fullscreen-bg:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.92), transparent 24%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+}
+
+:root[data-theme="dark"] {
+  --bg: #07111c;
+  --card: rgba(9, 17, 28, 0.76);
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #f3f6fb;
+  --muted: #9cabbe;
+  --accent: #f5f5f7;
+  --accent-2: #d7dce3;
+  --good: #7be495;
+  --shadow: 0 24px 72px rgba(0, 0, 0, 0.38);
+  --body-gradient:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(148, 163, 184, 0.14), transparent 26%),
+    linear-gradient(180deg, #03070d 0%, #07111c 44%, #102033 100%);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --pill-bg: rgba(255, 255, 255, 0.08);
+  --subtle-button-bg: rgba(255, 255, 255, 0.08);
+  --subtle-button-text: #d7dce3;
+  --message-bg: rgba(255, 255, 255, 0.08);
+  --surface-bg: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.08);
+  --fullscreen-bg:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 24%),
+    linear-gradient(180deg, #03070d 0%, #0a1522 100%);
 }
 
 * {
@@ -17,12 +57,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(255, 122, 24, 0.22), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 209, 102, 0.2), transparent 24%),
-    linear-gradient(135deg, #04080e 0%, #08111b 50%, #10233a 100%);
+  background: var(--body-gradient);
 }
 
 button,
@@ -38,7 +75,7 @@ a {
 .page-shell {
   width: min(1380px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 40px;
+  padding: 48px 0 56px;
 }
 
 .hero-panel,
@@ -48,7 +85,8 @@ a {
 }
 
 .hero-panel {
-  margin-bottom: 28px;
+  gap: 32px;
+  margin-bottom: 44px;
 }
 
 .hero-copy h1,
@@ -57,24 +95,31 @@ a {
 .prejoin-panel h3,
 .admin-panel h3,
 .player-fallback h3 {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   margin: 0;
 }
 
 .hero-copy h1 {
-  max-width: 12ch;
-  font-size: clamp(2.6rem, 6vw, 5.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.05em;
+  max-width: 11ch;
+  font-size: clamp(2.8rem, 6vw, 5.6rem);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+  margin-bottom: 16px;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 0;
+  max-width: 780px;
 }
 
 .eyebrow,
 .label {
   margin: 0 0 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.78rem;
-  color: var(--accent-2);
+  letter-spacing: -0.01em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4b5563;
 }
 
 .lede,
@@ -88,22 +133,26 @@ a {
   line-height: 1.6;
 }
 
+.lede {
+  max-width: 56ch;
+  font-size: 1.08rem;
+}
+
 .stream-form,
-.feature-strip,
 .player-card,
 .chat-card,
 .prejoin-panel {
   background: var(--card);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(26px) saturate(1.1);
 }
 
 .stream-form {
   display: grid;
   gap: 14px;
-  padding: 20px;
-  border-radius: 24px;
+  padding: 18px;
+  border-radius: 22px;
 }
 
 .stream-form label,
@@ -124,11 +173,11 @@ a {
 .join-form input,
 .pin-form input,
 .message-form input {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--input-bg);
   color: var(--text);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 13px 15px;
   outline: none;
 }
 
@@ -144,25 +193,33 @@ a {
   border: 0;
   border-radius: 999px;
   padding: 12px 18px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  color: #0b0e13;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: #ffffff;
+  background: linear-gradient(180deg, #1d1d1f 0%, #2b2b2d 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .message-action,
 .participant-actions button,
 .theater-secondary-button,
-.theater-restore-button {
+.theater-restore-button,
+.theme-toggle-button {
   padding: 6px 10px;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--line);
+  color: var(--subtle-button-text);
+  background: var(--subtle-button-bg);
+  border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .theater-mode-button {
   white-space: nowrap;
+}
+
+.theme-toggle-button {
+  white-space: nowrap;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
 .theater-restore-button {
@@ -181,24 +238,27 @@ a {
 .feature-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  padding: 18px 20px;
-  border-radius: 24px;
+  gap: 24px;
+  padding: 4px 0 0;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .feature-strip div {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding-top: 18px;
 }
 
 .feature-strip strong {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.96rem;
+  font-weight: 600;
 }
 
 .feature-strip span {
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-size: 0.95rem;
 }
 
 .experience-panel {
@@ -207,8 +267,14 @@ a {
 
 .player-card,
 .chat-card {
-  border-radius: 28px;
-  padding: 22px;
+  border-radius: 30px;
+  padding: 26px;
+}
+
+.player-header h2,
+.prejoin-panel h3,
+.admin-panel h3 {
+  letter-spacing: -0.03em;
 }
 
 .player-header,
@@ -252,10 +318,11 @@ a {
 .connection-pill,
 .admin-badge {
   white-space: nowrap;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.05);
   border-radius: 999px;
-  padding: 10px 14px;
+  padding: 9px 13px;
   color: var(--muted);
+  background: var(--pill-bg);
 }
 
 .connection-pill {
@@ -336,6 +403,7 @@ a {
   border-radius: 22px;
   padding: 18px;
   margin-top: 18px;
+  background: var(--surface-bg);
 }
 
 .moderator-notice {
@@ -352,9 +420,9 @@ a {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 209, 102, 0.22);
+  border: 1px solid rgba(17, 24, 39, 0.08);
   border-radius: 18px;
-  background: rgba(255, 209, 102, 0.08);
+  background: var(--surface-strong);
 }
 
 .pinned-card p,
@@ -391,9 +459,9 @@ a {
   justify-self: start;
   width: fit-content;
   max-width: min(100%, 34rem);
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-radius: 20px 20px 20px 8px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   word-break: break-word;
 }
 
@@ -418,15 +486,15 @@ a {
 }
 
 .message-avatar {
-  width: 34px;
-  height: 34px;
-  font-size: 0.8rem;
+  width: 30px;
+  height: 30px;
+  font-size: 0.72rem;
 }
 
 .mini-avatar {
   width: 24px;
   height: 24px;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
 }
 
 .system-avatar {
@@ -435,14 +503,14 @@ a {
 }
 
 .message.user {
-  background: rgb(15, 29, 45);
+  background: var(--message-bg);
 }
 
 .message.user.own {
   justify-self: end;
   border-radius: 20px 20px 8px 20px;
-  background: linear-gradient(180deg, #2f7bf6 0%, #1f6ae6 100%);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, #0071e3 0%, #0077ed 100%);
+  border-color: rgba(0, 113, 227, 0.22);
 }
 
 .message.user.own .message-shell {
@@ -458,15 +526,15 @@ a {
 }
 
 .message.system {
-  background: rgb(74, 35, 7);
+  background: rgba(245, 158, 11, 0.16);
   border-radius: 16px;
 }
 
 .message-meta {
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.76rem;
 }
 
 .message.user.own .message-meta,
@@ -482,7 +550,8 @@ a {
 
 .message p {
   margin: 0;
-  line-height: 1.55;
+  font-size: 0.88rem;
+  line-height: 1.45;
 }
 
 .message-form {
@@ -520,7 +589,7 @@ a {
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-bg);
 }
 
 .participant-copy {
@@ -547,7 +616,8 @@ a {
 
 .reports-header h4 {
   margin: 0 0 10px;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
 }
 
 .reports-list {
@@ -564,7 +634,7 @@ a {
   padding: 12px 14px;
   border-radius: 16px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-bg);
 }
 
 .report-copy {
@@ -584,9 +654,7 @@ a {
   grid-template-columns: 1fr;
   gap: 0;
   padding: 20px;
-  background:
-    radial-gradient(circle at top left, rgba(255, 122, 24, 0.18), transparent 30%),
-    linear-gradient(135deg, #02060b 0%, #08111b 55%, #10233a 100%);
+  background: var(--fullscreen-bg);
 }
 
 .experience-panel:fullscreen .player-card,
@@ -691,11 +759,16 @@ a {
 @media (max-width: 640px) {
   .page-shell {
     width: min(100%, calc(100% - 20px));
-    padding: 18px 0 24px;
+    padding: 24px 0 32px;
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.2rem, 12vw, 3.6rem);
+    font-size: clamp(2.3rem, 12vw, 3.8rem);
+  }
+
+  .hero-panel {
+    gap: 24px;
+    margin-bottom: 30px;
   }
 
   .player-card,
@@ -716,7 +789,7 @@ a {
 
   .message {
     max-width: 100%;
-    padding: 7px 9px;
+    padding: 6px 8px;
   }
 
   .message-shell {

@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StreamSide Chat</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -17,7 +11,7 @@
       <section class="hero-panel">
         <div class="hero-copy">
           <p class="eyebrow">Independent Live Chat Layer</p>
-          <h1>Embed the stream. Own the conversation.</h1>
+          <h1>Embed the stream.<br />Own the conversation.</h1>
           <p class="lede">
             Create a shareable stream page, keep the chat under your control, and
             bring viewers into one moderated room even when YouTube chat is off.
@@ -41,15 +35,15 @@
         <div class="feature-strip">
           <div>
             <strong>Shareable</strong>
-            <span>Each stream gets its own URL like `/stream/videoId`.</span>
+            <span>Every stream gets one clean link.</span>
           </div>
           <div>
             <strong>Moderated</strong>
-            <span>Rate limits, blocked words, timeouts, mute, ban, and delete.</span>
+            <span>Controls for safer, calmer live chat.</span>
           </div>
           <div>
             <strong>Live Presence</strong>
-            <span>See who is here now and when people are typing.</span>
+            <span>See the room react in real time.</span>
           </div>
         </div>
       </section>
@@ -62,6 +56,9 @@
               <h2 id="stream-title">Paste a stream above to create a live chat page</h2>
             </div>
             <div class="player-actions">
+              <button id="theme-toggle-button" class="theme-toggle-button" type="button">
+                Dark Mode
+              </button>
               <p id="room-badge" class="room-badge">No stream selected</p>
               <button id="theater-mode-button" class="theater-mode-button" type="button">
                 Fullscreen

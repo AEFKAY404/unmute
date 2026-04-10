@@ -2,6 +2,7 @@
   const BACKEND_URL = "https://unmute-b7au.onrender.com";
   const DEFAULT_SETTINGS = {
     enabled: true,
+    theme: "light",
     displayName: "",
   };
 
@@ -20,6 +21,7 @@
     inputEl: null,
     sendButtonEl: null,
     hideButtonEl: null,
+    themeButtonEl: null,
     currentUrl: location.href,
     currentHistory: [],
     hasJoinedRoom: false,
@@ -92,6 +94,7 @@
           <h2 class="unmute-title">Waiting for stream…</h2>
         </div>
         <div class="unmute-header-actions">
+          <button class="unmute-theme" type="button">Dark Mode</button>
           <span class="unmute-pill">Chat live</span>
           <button class="unmute-hide" type="button">Hide</button>
         </div>
@@ -122,6 +125,7 @@
     state.inputEl = overlay.querySelector(".unmute-input");
     state.sendButtonEl = overlay.querySelector(".unmute-send");
     state.hideButtonEl = overlay.querySelector(".unmute-hide");
+    state.themeButtonEl = overlay.querySelector(".unmute-theme");
 
     state.hideButtonEl.addEventListener("click", () => {
       overlay.classList.add("hidden");
@@ -131,6 +135,11 @@
     restoreButton.addEventListener("click", () => {
       overlay.classList.remove("hidden");
       restoreButton.classList.add("hidden");
+    });
+
+    state.themeButtonEl.addEventListener("click", async () => {
+      const nextTheme = state.settings.theme === "dark" ? "light" : "dark";
+      await chrome.storage.sync.set({ theme: nextTheme });
     });
 
     overlay.querySelector(".unmute-form").addEventListener("submit", (event) => {
@@ -147,6 +156,19 @@
     });
 
     setComposerEnabled(false);
+  }
+
+  function applyTheme(theme) {
+    state.settings.theme = theme === "dark" ? "dark" : "light";
+    if (state.overlay) {
+      state.overlay.dataset.theme = state.settings.theme;
+    }
+    if (state.restoreButton) {
+      state.restoreButton.dataset.theme = state.settings.theme;
+    }
+    if (state.themeButtonEl) {
+      state.themeButtonEl.textContent = state.settings.theme === "dark" ? "Light Mode" : "Dark Mode";
+    }
   }
 
   function setComposerEnabled(enabled) {
@@ -358,6 +380,7 @@
     } else {
       state.sessionId = localState.sessionId;
     }
+    applyTheme(state.settings.theme);
   }
 
   chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -367,6 +390,9 @@
 
     if (changes.enabled) {
       state.settings.enabled = changes.enabled.newValue;
+    }
+    if (changes.theme) {
+      applyTheme(changes.theme.newValue);
     }
     if (changes.displayName) {
       state.settings.displayName = changes.displayName.newValue;

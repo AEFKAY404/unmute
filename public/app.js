@@ -10,6 +10,7 @@ const messageButton = messageForm.querySelector("button");
 const streamTitle = document.getElementById("stream-title");
 const roomBadge = document.getElementById("room-badge");
 const embedHelp = document.getElementById("embed-help");
+const themeToggleButton = document.getElementById("theme-toggle-button");
 const experiencePanel = document.getElementById("experience-panel");
 const theaterModeButton = document.getElementById("theater-mode-button");
 const theaterToolbar = document.getElementById("theater-toolbar");
@@ -61,6 +62,7 @@ let currentRoomSettings = null;
 let theaterChatCollapsed = false;
 let theaterDragState = null;
 let currentStreamLabel = "";
+let currentTheme = localStorage.getItem("streamside-theme") || "light";
 
 localStorage.setItem("streamside-session-id", sessionId);
 usernameInput.value = activeUsername;
@@ -148,6 +150,15 @@ function setConnectedState(isConnected) {
   connectionPill.textContent = isConnected ? "Connected" : "Offline";
   connectionPill.classList.toggle("offline", !isConnected);
   connectionPill.classList.toggle("online", isConnected);
+}
+
+function applyTheme(theme) {
+  currentTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = currentTheme;
+  localStorage.setItem("streamside-theme", currentTheme);
+  if (themeToggleButton) {
+    themeToggleButton.textContent = currentTheme === "dark" ? "Light Mode" : "Dark Mode";
+  }
 }
 
 function isTheaterModeActive() {
@@ -585,6 +596,10 @@ theaterExitButton.addEventListener("click", () => {
   }
 });
 
+themeToggleButton?.addEventListener("click", () => {
+  applyTheme(currentTheme === "dark" ? "light" : "dark");
+});
+
 document.addEventListener("fullscreenchange", () => {
   if (!isTheaterModeActive()) {
     theaterChatCollapsed = false;
@@ -836,6 +851,7 @@ reportsList.addEventListener("click", (event) => {
 });
 
 const initialVideoId = getVideoIdFromPath();
+applyTheme(currentTheme);
 syncTheaterUi();
 if (initialVideoId) {
   setStreamContext(initialVideoId);

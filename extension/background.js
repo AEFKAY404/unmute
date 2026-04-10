@@ -1,5 +1,6 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
+  theme: "light",
   displayName: "",
 };
 
@@ -7,6 +8,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   const syncSettings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   await chrome.storage.sync.set({
     enabled: syncSettings.enabled,
+    theme: syncSettings.theme,
     displayName: syncSettings.displayName,
   });
 
